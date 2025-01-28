@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Elastic Ropes</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+
+    body {
+
+      font-family: Arial, sans-serif;
+
+      margin: 0;
+
+      padding: 0;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
+
+      height: 100vh;
+
+      background-color: #f0f8ff;
+
+    }
+
+    .rope-container {
+
+      position: relative;
+
+      width: 80%;
+
+      max-width: 800px;
+
+      height: 300px;
+
+      display: flex;
+
+      justify-content: space-between;
+
+    }
+
+    .pole {
+
+      width: 10px;
+
+      background-color: red;
+
+      height: 100%;
+
+      position: relative;
+
+    }
+
+    .rope {
+
+      position: absolute;
+
+      height: 5px;
+
+      background-color: blue;
+
+      left: 10px;
+
+      right: 10px;
+
+      cursor: pointer;
+
+      transform-origin: left;
+
+    }
+
+    .rope:nth-child(2) { top: 33%; }
+
+    .rope:nth-child(3) { top: 66%; }
+
+    .woofer {
+
+      margin-top: 20px;
+
+      width: 150px;
+
+      height: 150px;
+
+      border-radius: 50%;
+
+      background: radial-gradient(circle, #444, #000);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: white;
+
+      font-weight: bold;
+
+    }
+
+    .warning {
+
+      margin-top: 10px;
+
+      color: red;
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      display: none;
+
+    }
+
+    .buttons {
+
+      margin-top: 20px;
+
+      display: flex;
+
+      gap: 10px;
+
+    }
+
+    @media (max-width: 768px) {
+
+      .rope-container {
+
+        width: 95%;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="rope-container">
+
+    <div class="pole"></div>
+
+    <div class="rope" id="rope1"></div>
+
+    <div class="rope" id="rope2"></div>
+
+    <div class="pole"></div>
+
+  </div>
+
+
+
+  <div id="warning" class="warning">Warning: Someone is entering your area!</div>
+
+
+
+  <div class="woofer">Woofer</div>
+
+
+
+  <div class="buttons">
+
+    <button class="btn btn-primary" id="btn1">Stop Sound</button>
+
+    <button class="btn btn-danger" id="btn2">Stop All</button>
+
+  </div>
+
+
+
+  <script>
+
+    const ropes = document.querySelectorAll(".rope");
+
+    const warning = document.getElementById("warning");
+
+    let soundPlaying = true;
+
+    let warningActive = true;
+
+
+
+    // Play sound function
+
+    function playSound() {
+
+      const audio = new audio("./t-rex-roar.mp3");
+
+      audio.play();
+
+    }
+
+
+
+    // Add drag and stretch functionality
+
+    ropes.forEach(rope => {
+
+      rope.addEventListener("mousedown", (e) => {
+
+        if (warningActive) warning.style.display = "block";
+
+        if (soundPlaying) playSound();
+
+
+
+        const startX = e.clientX;
+
+        let currentX = startX;
+
+
+
+        const onMouseMove = (event) => {
+
+          currentX = event.clientX;
+
+          const distance = Math.min(30, Math.max(-30, currentX - startX)); // 30px stretch limit
+
+          rope.style.transform = `translateX(${distance}px)`;
+
+        };
+
+
+
+        const onMouseUp = () => {
+
+          rope.style.transform = "translateX(0)"; // Reset position
+
+          document.removeEventListener("mousemove", onMouseMove);
+
+          document.removeEventListener("mouseup", onMouseUp);
+
+        };
+
+
+
+        document.addEventListener("mousemove", onMouseMove);
+
+        document.addEventListener("mouseup", onMouseUp);
+
+      });
+
+    });
+
+
+
+    // Button functionalities
+
+    document.getElementById("btn1").addEventListener("click", () => {
+
+      soundPlaying = false;
+
+    });
+
+
+
+    document.getElementById("btn2").addEventListener("click", () => {
+
+      soundPlaying = false;
+
+      warningActive = false;
+
+      warning.style.display = "none";
+
+    });
+
+  </script>
+
+</body>
+
+</html>
